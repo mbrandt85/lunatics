@@ -9,7 +9,10 @@
         "firebase-debug.log",
         "firebase-debug.*.log"
       ],
-      "runtime": "nodejs22"
+      "runtime": "nodejs22",
+      "experimental": {
+        "pack": true
+      }
     }
   ],
   "hosting": {

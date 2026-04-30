@@ -1,10 +1,18 @@
-import * as functions from "firebase-functions";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { setGlobalOptions } from "firebase-functions/v2";
 import admin from "firebase-admin";
 import { defineSecret } from "firebase-functions/params";
 import { BigQuery } from "@google-cloud/bigquery";
 import { GoogleGenAI } from "@google/genai";
+import * as logger from "firebase-functions/logger";
 
 const geminiApiKeySecret = defineSecret("GEMINI_API_KEY");
+
+// Set global options to Gen 2 and Europe
+setGlobalOptions({ 
+  region: "europe-west1",
+  memory: "256MiB"
+});
 
 admin.initializeApp();
 
@@ -18,12 +26,12 @@ const db = admin.firestore();
  * Scheduled: Hourly
  * Logic: Fetch from Polisen API, filter processed links, analyze via Gemini, stream to BigQuery.
  */
-export const fetchAndAnalyze = functions
-  .runWith({ secrets: [geminiApiKeySecret] })
-  .pubsub
-  .schedule("every 3 hours")
-  .onRun(async (context) => {
-    functions.logger.info("Starting fetchAndAnalyze", { structuredData: true });
+export const fetchAndAnalyze = onSchedule({
+  schedule: "every 3 hours",
+  secrets: [geminiApiKeySecret],
+  retryCount: 3
+}, async (event) => {
+  logger.info("Starting fetchAndAnalyze", { structuredData: true });
 
     try {
       // 1. Fetch JSON from polisen.se/api/events for TODAY only
@@ -39,10 +47,10 @@ export const fetchAndAnalyze = functions
       // 3. Filter out already processed links
       const newEvents = events.filter(event => !processedEvents.has(event.id));
 
-      if (newEvents.length === 0) {
-        functions.logger.info("No new events to process.");
-        return null;
-      }
+    if (newEvents.length === 0) {
+      logger.info("No new events to process.");
+      return;
+    }
 
       // 4. Batch-send new events to Gemini for analysis
       const geminiApiKey = geminiApiKeySecret.value();
@@ -104,10 +112,10 @@ export const fetchAndAnalyze = functions
         .filter((row): row is Exclude<typeof row, null> => row !== null);
 
       if (rowsToInsert.length > 0) {
-        functions.logger.info("Attempting to insert rows:", { count: rowsToInsert.length, sample: rowsToInsert[0] });
+        logger.info("Attempting to insert rows:", { count: rowsToInsert.length, sample: rowsToInsert[0] });
         try {
           await bq.dataset(bqDataset).table(bqTable).insert(rowsToInsert);
-          functions.logger.info(`Inserted ${rowsToInsert.length} violent crimes into BigQuery.`);
+          logger.info(`Inserted ${rowsToInsert.length} violent crimes into BigQuery.`);
         } catch (err: any) {
           console.error("!!! BIGQUERY FATAL ERROR !!!");
           if (err.errors) {
@@ -127,9 +135,9 @@ export const fetchAndAnalyze = functions
         expiresAt: admin.firestore.Timestamp.fromDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)) // Auto-delete after 7 days
       }, { merge: true });
 
-      functions.logger.info(`Marked ${newEvents.length} events as processed in cache.`);
+      logger.info(`Marked ${newEvents.length} events as processed in cache.`);
     } catch (error) {
-      functions.logger.error("Error in fetchAndAnalyze", error);
+      logger.error("Error in fetchAndAnalyze", error);
     }
 
     return null;
@@ -139,12 +147,11 @@ export const fetchAndAnalyze = functions
  * Scheduled: Daily 01:00
  * Logic: Fetch daily stats from BQ, generate article via Gemini, save to Firestore.
  */
-export const articlePublisher = functions
-  .runWith({ secrets: [geminiApiKeySecret] })
-  .pubsub
-  .schedule("0 1 * * *")
-  .onRun(async (context) => {
-    functions.logger.info("Starting articlePublisher", { structuredData: true });
+export const articlePublisher = onSchedule({
+  schedule: "0 1 * * *",
+  secrets: [geminiApiKeySecret]
+}, async (event) => {
+  logger.info("Starting articlePublisher", { structuredData: true });
     
     try {
       const bqDataset = "lunatics";
@@ -171,8 +178,8 @@ export const articlePublisher = functions
       });
 
       if (rows.length === 0) {
-        functions.logger.info("No stats found.");
-        return null;
+      logger.info("No stats found.");
+      return;
       }
 
       const yesterdayStatsRaw = rows.find(r => (r.date?.value || r.date) === yesterdayStr);
@@ -264,12 +271,12 @@ export const articlePublisher = functions
         published_at: admin.firestore.FieldValue.serverTimestamp()
       };
 
-      await db.collection("daily_articles").doc(todayStr).set(article);
-      functions.logger.info(`Published enriched article for ${todayStr}.`);
+    await db.collection("daily_articles").doc(todayStr).set(article);
+    logger.info(`Published enriched article for ${todayStr}.`);
 
-    } catch (error) {
-      functions.logger.error("Error in articlePublisher", error);
-    }
+  } catch (error) {
+    logger.error("Error in articlePublisher", error);
+  }
     
     return null;
   });
