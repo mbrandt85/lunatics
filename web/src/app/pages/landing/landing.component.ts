@@ -268,7 +268,7 @@ export class LandingComponent {
         this.dateSubject.next(dateStr);
       } else {
         // Default: Use TODAY
-        const todayStr = this.maxDate.toISOString().split('T')[0];
+        const todayStr = this.formatDate(this.maxDate);
         this.selectedDate.set(new Date(this.maxDate));
         this.dateSubject.next(todayStr);
       }
@@ -284,8 +284,8 @@ export class LandingComponent {
   }
 
   isToday(): boolean {
-    const today = new Date().toISOString().split('T')[0];
-    const selected = this.selectedDate().toISOString().split('T')[0];
+    const today = this.formatDate(new Date());
+    const selected = this.formatDate(this.selectedDate());
     return today === selected;
   }
 
@@ -299,10 +299,17 @@ export class LandingComponent {
     if (date) this.navigateToDate(date);
   }
 
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   private navigateToDate(date: Date) {
     // Cap at today
     const finalDate = date > this.maxDate ? this.maxDate : date;
-    const dateStr = finalDate.toISOString().split('T')[0];
+    const dateStr = this.formatDate(finalDate);
     this.router.navigate(['/', dateStr]);
   }
 }
