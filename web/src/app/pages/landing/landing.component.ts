@@ -205,7 +205,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     }
     .stat-card {
       background: var(--mat-sys-surface-container);
-      padding: 1.25rem;
+      padding: 0.75rem 1rem;
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
