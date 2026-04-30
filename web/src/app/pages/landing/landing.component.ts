@@ -73,6 +73,14 @@ import { ActivatedRoute, Router } from '@angular/router';
           <div class="context-tag" *ngIf="article()?.context">
             <mat-icon>event</mat-icon> {{ article()?.context }}
           </div>
+
+          <div class="risk-meter">
+            <div class="risk-label">
+              <span>Risk Level</span>
+              <span>{{ (article()?.risk_level || 0) * 10 }}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="(article()?.risk_level || 0) * 10"></mat-progress-bar>
+          </div>
         </div>
 
         <div class="main-body" [innerHTML]="article()?.body"></div>
@@ -94,13 +102,6 @@ import { ActivatedRoute, Router } from '@angular/router';
             </div>
           </div>
           
-          <div class="risk-meter">
-            <div class="risk-label">
-              <span>Risk Level</span>
-              <span>{{ (article()?.risk_level || 0) * 10 }}%</span>
-            </div>
-            <mat-progress-bar mode="determinate" [value]="(article()?.risk_level || 0) * 10"></mat-progress-bar>
-          </div>
         </section>
       </article>
     </div>
@@ -213,7 +214,9 @@ import { ActivatedRoute, Router } from '@angular/router';
     .stat-card .label { color: var(--mat-sys-on-surface-variant); font-size: 0.9rem; }
     .stat-card .value { color: var(--mat-sys-on-surface); font-weight: 600; font-size: 1.1rem; }
     
-    .risk-meter { margin-top: 2rem; }
+    .risk-meter { 
+      margin-top: 1.5rem; 
+    }
     .risk-label {
       display: flex;
       justify-content: space-between;
