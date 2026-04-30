@@ -303,6 +303,6 @@ export class LandingComponent {
     // Cap at today
     const finalDate = date > this.maxDate ? this.maxDate : date;
     const dateStr = finalDate.toISOString().split('T')[0];
-    this.router.navigate([dateStr]);
+    this.router.navigate(['/', dateStr]);
   }
 }
