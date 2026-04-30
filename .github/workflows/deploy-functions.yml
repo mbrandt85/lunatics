@@ -38,5 +38,8 @@ jobs:
         with:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LUNATICS_D8B5A }}'
 
+      - name: Install Firebase CLI
+        run: pnpm add -g firebase-tools
+
       - name: Deploy to Firebase Functions
-        run: pnpm firebase deploy --only functions --project lunatics-d8b5a
+        run: firebase deploy --only functions --project lunatics-d8b5a
