@@ -201,7 +201,7 @@ import { ActivatedRoute, Router } from '@angular/router';
       display: grid;
       grid-template-columns: 1fr;
       gap: 1rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0;
     }
     .stat-card {
       background: var(--mat-sys-surface-container);
