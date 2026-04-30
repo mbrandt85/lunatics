@@ -20,7 +20,7 @@
     "@google/genai": "^1.0.0",
     "firebase-admin": "^11.0.0",
     "firebase-functions": "^4.0.0",
-    "@lunatics/shared": "workspace:*"
+    "@lunatics/shared": "file:./shared-local"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

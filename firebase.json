@@ -3,6 +3,7 @@
     {
       "source": "functions",
       "predeploy": [
+        "rm -rf functions/shared-local && cp -r shared functions/shared-local",
         "pnpm --filter lunatics-functions build"
       ],
       "codebase": "default",
