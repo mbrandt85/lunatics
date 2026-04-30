@@ -126,7 +126,7 @@ export const fetchAndAnalyze = onSchedule({
           throw err;
         }
       } else {
-        functions.logger.info("No violent crimes detected in this batch.");
+        logger.info("No violent crimes detected in this batch.");
       }
 
       // 6. Update Firestore cache with ALL new IDs (so we don't re-analyze them)
@@ -135,13 +135,11 @@ export const fetchAndAnalyze = onSchedule({
         expiresAt: admin.firestore.Timestamp.fromDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)) // Auto-delete after 7 days
       }, { merge: true });
 
-      logger.info(`Marked ${newEvents.length} events as processed in cache.`);
-    } catch (error) {
-      logger.error("Error in fetchAndAnalyze", error);
-    }
-
-    return null;
-  });
+    logger.info(`Marked ${newEvents.length} events as processed in cache.`);
+  } catch (error) {
+    logger.error("Error in fetchAndAnalyze", error);
+  }
+});
 
 /**
  * Scheduled: Daily 01:00
@@ -186,8 +184,8 @@ export const articlePublisher = onSchedule({
       const todayStatsRaw = rows.find(r => (r.date?.value || r.date) === todayStr);
 
       if (!yesterdayStatsRaw) {
-        functions.logger.info(`No stats found for yesterday (${yesterdayStr}).`);
-        return null;
+        logger.info(`No stats found for yesterday (${yesterdayStr}).`);
+        return;
       }
 
       // Clean data for Firestore (BigQueryDate -> string)
@@ -277,6 +275,4 @@ export const articlePublisher = onSchedule({
   } catch (error) {
     logger.error("Error in articlePublisher", error);
   }
-    
-    return null;
-  });
+});
