@@ -123,7 +123,8 @@ export const fetchAndAnalyze = functions
 
       // 6. Update Firestore cache with ALL new IDs (so we don't re-analyze them)
       await cacheRef.set({
-        events: admin.firestore.FieldValue.arrayUnion(...newEvents.map(e => e.id))
+        events: admin.firestore.FieldValue.arrayUnion(...newEvents.map(e => e.id)),
+        expiresAt: admin.firestore.Timestamp.fromDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)) // Auto-delete after 7 days
       }, { merge: true });
 
       functions.logger.info(`Marked ${newEvents.length} events as processed in cache.`);

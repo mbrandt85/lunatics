@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
     paths:
       - 'dbt/**'
       - '.github/workflows/deploy-dbt.yml'
