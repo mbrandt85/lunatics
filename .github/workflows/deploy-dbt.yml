@@ -1,0 +1,39 @@
+name: Deploy dbt
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dbt/**'
+      - '.github/workflows/deploy-dbt.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LUNATICS_D8B5A }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Docker auth'
+        run: |-
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: 'Build and push Docker container'
+        run: |-
+          docker build -t europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/dbt:latest ./dbt
+          docker push europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/dbt:latest
+
+      - name: 'Deploy to Cloud Run Job'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          job: 'lunatics-dbt-job'
+          image: 'europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/dbt:latest'
+          region: 'europe-west1'

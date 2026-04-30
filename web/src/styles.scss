@@ -1,0 +1,45 @@
+@use '@angular/material' as mat;
+
+// Include core styles
+@include mat.core();
+
+// Define the M3 theme
+$lunatics-theme: mat.define-theme((
+  color: (
+    theme-type: dark
+  ),
+  typography: (
+    brand-family: 'Outfit, sans-serif',
+    plain-family: 'Inter, sans-serif',
+  ),
+));
+
+// Apply the theme to all components (at top level!)
+@include mat.all-component-themes($lunatics-theme);
+@include mat.typography-hierarchy($lunatics-theme);
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #0a0a12;
+  color: #e0e0e0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a3a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a4a;
+}

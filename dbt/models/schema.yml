@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_crimes
+    description: "Cleaned up and deduplicated raw crime data."
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: link
+        tests:
+          - unique
+          - not_null
+
+  - name: int_moon_correlation
+    description: "Daily count of crimes joined with moon phase data."
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null
+      - name: moon_phase
+        tests:
+          - not_null
+
+  - name: fct_daily_stats
+    description: "Final daily statistics including deviation from historical averages."
+    columns:
+      - name: date
+        tests:
+          - unique
+          - not_null
+      - name: deviation_score
+        tests:
+          - not_null

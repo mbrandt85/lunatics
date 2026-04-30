@@ -1,0 +1,13 @@
+{
+  "name": "lunatics-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "dev:emulators": "firebase emulators:start --project lunatics-d8b5a"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

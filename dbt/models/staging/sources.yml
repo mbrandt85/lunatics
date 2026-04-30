@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: "{{ env_var('BQ_PROJECT_ID') }}"
+    schema: lunatics_raw
+    tables:
+      - name: raw_crimes
+        columns:
+          - name: id
+            tests:
+              - not_null
+          - name: link
+            tests:
+              - not_null

@@ -1,0 +1,42 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "packageManager": "pnpm@10.15.1",
+  "dependencies": {
+    "@angular/animations": "^21.2.11",
+    "@angular/cdk": "^21.2.9",
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "^21.2.0",
+    "@angular/material": "^21.2.9",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@lunatics/shared": "workspace:*",
+    "chart.js": "^4.5.1",
+    "firebase": "^12.12.1",
+    "ngx-charts": "^3.0.2",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.9",
+    "@angular/cli": "^21.2.9",
+    "@angular/compiler-cli": "^21.2.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "sass-embedded": "^1.99.0",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}

@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.firebase/
+.angular/
+functions/lib/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# dbt
+dbt/dbt_packages/
+dbt/target/
+dbt/logs/
+
+# OS files
+.DS_Store
+thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Firebase
+firebase-debug.log
+firestore-debug.log
+pubsub-debug.log
+ui-debug.log
