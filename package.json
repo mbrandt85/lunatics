@@ -8,6 +8,10 @@
     "dev:emulators": "firebase emulators:start --project lunatics-d8b5a"
   },
   "devDependencies": {
+    "@google-cloud/bigquery": "^7.9.4",
+    "@google/genai": "^1.51.0",
+    "firebase-admin": "^11.11.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0"
   }
 }
