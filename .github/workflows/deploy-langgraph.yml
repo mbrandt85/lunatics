@@ -1,0 +1,42 @@
+name: Deploy LangGraph
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'langgraph/**'
+      - '.github/workflows/deploy-langgraph.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LUNATICS_D8B5A }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Docker auth'
+        run: |-
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+
+      - name: 'Build and push Docker container'
+        run: |-
+          docker build -t europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/langgraph:latest ./langgraph
+          docker push europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/langgraph:latest
+
+      - name: 'Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'lunatics-langgraph'
+          image: 'europe-west1-docker.pkg.dev/lunatics-d8b5a/lunatics-repo/langgraph:latest'
+          region: 'europe-west1'
+          # Use secrets from GitHub secrets or mount from Secret Manager
+          env_vars: |
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}

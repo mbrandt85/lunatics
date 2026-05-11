@@ -1,0 +1,8 @@
+langgraph
+langchain-google-genai
+fastapi
+uvicorn
+pydantic
+google-cloud-bigquery
+google-cloud-firestore
+python-dotenv
